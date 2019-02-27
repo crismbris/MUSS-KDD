@@ -1,0 +1,20 @@
+rm(list = ls())
+
+
+#loading libraries
+library(randomForest)
+library(data.table)
+
+#loading datasets
+train <- fread("train-kaggle.csv")
+test <- fread("test.csv")
+
+print("started modelling...")
+
+train$label <- factor(train$label)
+rf_model <- randomForest(data = train, label ~ ., ntree = 20, do.trace = 1)
+
+print("random forest trained.")
+pred <- predict(rf_model, newdata = test)
+pred_df <- data.frame(ImageId = 1:28000, Label = pred )
+write.csv(pred_df, file = "digits_rf_2.csv", row.names = FALSE)
